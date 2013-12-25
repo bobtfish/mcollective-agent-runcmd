@@ -1,0 +1,7 @@
+*.changes
+*.dsc
+*.tar.gz
+*.swp
+*.diff.gz
+*.deb
+

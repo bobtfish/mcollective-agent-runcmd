@@ -9,7 +9,9 @@ metadata :name => "runcmd",
 action "run", :description => "Run a specific command" do
   display :always
 
-output :status
-  :description => "The command exit code",
-  :display_as  => "Exit code"
+  output :status,
+    :description => "The command exit code",
+    :display_as  => "Exit code"
+
+end
 
