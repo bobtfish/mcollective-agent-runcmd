@@ -2,7 +2,7 @@ metadata :name => "runcmd",
          :description => "Run _fixed_ commands on the agent, which come from config",
          :author => "Tomas Doran",
          :license => "Apache2",
-         :version => "0.0.1",
+         :version => "0.0.2",
          :url => "https://github.com/bobtfish/mcollective-runcmd",
          :timeout => 10
 
