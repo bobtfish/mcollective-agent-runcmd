@@ -2,7 +2,7 @@ module MCollective
   module Agent
     class Runcmd<RPC::Agent
       action "run" do
-        pid = `ps aux | grep nginx | grep master | | grep -v grep | awk '{print $2}' | head -n 1`.chomp
+        pid = `ps aux | grep nginx | grep master | grep -v grep | awk '{print $2}' | head -n 1`.chomp
         if pid =~ /^\d+$/
           Log.info("Found PID #{pid} for nginx - sending HUP")
           reply[:status] = system("kill -HUP #{pid}")
