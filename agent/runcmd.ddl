@@ -4,21 +4,29 @@ metadata :name => "runcmd",
          :license => "Apache2",
          :version => "0.0.2",
          :url => "https://github.com/bobtfish/mcollective-runcmd",
-         :timeout => 600
+         :timeout => 6000
 
 action "run", :description => "Run a specific command" do
   display :always
 
   input :command,
     :description => "The keyword for the command from the config file",
-    :display_as  => "Command name"
+    :display_as  => "Command name",
+    :optional    => false,
+    :prompt      => "Command: ",
+    :type        => :string,
+    :validation  => '^[a-zA-Z\-_\d]+$',
+    :maxlength   => 50
 
   output :status,
     :description => "The command exit code",
     :display_as  => "Exit code"
 
   output :output,
-    :description => "The command stdout/stderr",
-    :display_as  => "Exit code"
+    :description => "The command stdout",
+    :display_as  => "STDOUT"
+  output :error,
+    :description => "The command stderr",
+    :display_as  => "STDERR"
 end
 
