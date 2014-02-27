@@ -1,21 +1,30 @@
 require 'etc'
+require 'erb'
 
 module MCollective
   module Agent
     class Runcmd<RPC::Agent
       action "run" do
         validate :command, String
-        data = run_command request[:command]
+        data = run_command request
         reply[:status] = data[:status]
         reply[:output] = data[:output]
+        reply[:error] = data[:error]
       end
 
-      def run_command (command)
+      def run_command (request_and_params)
+        command = request_and_params[:command]
         cmdline = config["runcmd.#{command}"]
+
         dir = config["runcmd.#{command}.cwd"] || '/'
         user = config["runcmd.#{command}.user"] || 'root'
         if cmdline
           Log.info("Found cmd #{command} running: #{cmdline}")
+
+          interpolated_cmdline = ERB.new(cmdline).result(ERBCtx.new(request_and_params).get_binding)
+
+          Log.info("After interpolated: #{interpolated_cmdline}")
+
           Dir.chdir(dir) do
             u = (user.is_a? Integer) ? Etc.getpwuid(user) : Etc.getpwnam(user)
 
@@ -32,7 +41,7 @@ module MCollective
               $stderr.reopen(werr)
               # We're in the child. Set the process's user ID.
               Process.uid = u.uid
-              system(cmdline)
+              system(interpolated_cmdline)
             end
             # close write ends so we could read them
             wout.close
@@ -104,6 +113,17 @@ module MCollective
         Config.instance.pluginconf.reject { |k,v| ! /^runcmd\./.match(k) }
       end
 
+    end
+    class ERBCtx
+      def initialize(request)
+        request.data.each_pair do |key, value|
+          instance_variable_set('@' + key.to_s, value)
+        end
+      end
+
+      def get_binding
+        binding
+      end
     end
   end
 end
