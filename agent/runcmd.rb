@@ -117,6 +117,7 @@ module MCollective
     class ERBCtx
       def initialize(request)
         request.data.each_pair do |key, value|
+          raise("Value #{value} for key #{key.to_s} not simple, avoiding quoting issues or shell injection by just bailing, sorry") unless value =~ /^[\w-]+$/
           instance_variable_set('@' + key.to_s, value)
         end
       end
